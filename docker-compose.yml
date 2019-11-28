@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  db:
+    container_name: artists_db
+    image: mysql:5.7
+    volumes:
+      - ./db/script.sql:/docker-entrypoint-initdb.d/script.sql
+      - ./db/data:/var/lib/mysql
+    env_file:
+      - ./db/db.env
+    ports:
+      - "3310:3306"
+    networks: 
+      - net
+  api:
+    container_name: artists_api
+    build: ./api/
+    ports:
+      - "3311:3000"
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+    networks:
+      - net
+networks:
+  net:
